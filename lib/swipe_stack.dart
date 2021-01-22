@@ -1,4 +1,4 @@
-import 'dart:math' as Math;
+import 'dart:math';
 import 'package:flutter/widgets.dart';
 
 enum SwiperPosition { None, Left, Right }
