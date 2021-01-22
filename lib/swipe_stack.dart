@@ -292,7 +292,7 @@ class SwipeStackState extends State<SwipeStack> with SingleTickerProviderStateMi
     if (widget.children.length > 0 && _animationController.status != AnimationStatus.forward) {
       _animationType = 2;
       _animationX = Tween<double>(begin: 0, end: _baseContainerConstraints.maxWidth * -1).animate(_animationController);
-      _//animationY = Tween<double>(begin: 0, end: (_baseContainerConstraints.maxHeight / 2) * -1).animate(_animationController);
+      //_animationY = Tween<double>(begin: 0, end: (_baseContainerConstraints.maxHeight / 2) * -1).animate(_animationController);
       if (widget.maxAngle > 0)
         _animationAngle = Tween<double>(begin: 0, end: _maxAngle * 0.7).animate(_animationController);
       _animationController.forward();
@@ -318,7 +318,7 @@ class SwipeStackState extends State<SwipeStack> with SingleTickerProviderStateMi
 
       widget.children.add(lastHistory["item"]);
       _animationX = Tween<double>(begin: lastHistory["left"], end: 0).animate(_animationController);
-      _animationY = Tween<double>(begin: lastHistory["top"], end: 0).animate(_animationController);
+      // _animationY = Tween<double>(begin: lastHistory["top"], end: 0).animate(_animationController);
       if (widget.maxAngle > 0)
         _animationAngle = Tween<double>(begin: lastHistory["angle"], end: 0).animate(_animationController);
 
