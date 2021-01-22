@@ -276,7 +276,7 @@ class SwipeStackState extends State<SwipeStack> with SingleTickerProviderStateMi
     } else {
         //_animationController.duration = Duration(milliseconds: 100);
           _animationController.duration =
-          Duration(milliseconds: min(300 - (5 * _progress.toInt()),100));
+          Duration(milliseconds: max(400 - (5 * _progress.toInt()),150));
       _animationType = 1;
       _animationX = Tween<double>(begin: _left, end: _baseContainerConstraints.maxWidth * (_left < 0 ? -1 : 1)).animate(_animationController);
       //_animationY = Tween<double>(begin: _top, end: _top + _top).animate(_animationController);
