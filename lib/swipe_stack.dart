@@ -1,4 +1,5 @@
 import 'dart:math' as Math;
+import 'dart:math';
 import 'package:flutter/widgets.dart';
 
 enum SwiperPosition { None, Left, Right }
@@ -89,8 +90,8 @@ class SwipeStackState extends State<SwipeStack>
   void initState() {
     if (widget.maxAngle > 0) _maxAngle = widget.maxAngle * (Math.pi / 180);
 
-    _animationController =
-        AnimationController(duration: widget.animationDuration, vsync: this);
+    // _animationController =
+    //   AnimationController(duration: widget.animationDuration, vsync: this);
 
     _animationController.addListener(() {
       if (_animationController.status == AnimationStatus.forward) {
@@ -270,6 +271,9 @@ class SwipeStackState extends State<SwipeStack>
     if (_progress < widget.threshold) {
       _goFirstPosition();
     } else {
+      _animationController.duration =
+          Duration(milliseconds: min(300 - (5 * _progress.toInt()),50));
+      print(_animationController.duration.toString() + 'luuuul1');
       _animationType = 1;
       _animationX = Tween<double>(
               begin: _left,
@@ -295,8 +299,7 @@ class SwipeStackState extends State<SwipeStack>
   void swipeLeft() {
     if (widget.children.length > 0 &&
         _animationController.status != AnimationStatus.forward) {
-      _animationController.duration = widget.animationDuration -
-          Duration(milliseconds: 3 * _progress.toInt());
+      print(_animationController.duration.toString() + 'luuuul2');
       _animationType = 2;
       _animationX =
           Tween<double>(begin: 0, end: _baseContainerConstraints.maxWidth * -1)
@@ -312,8 +315,7 @@ class SwipeStackState extends State<SwipeStack>
   void swipeRight() {
     if (widget.children.length > 0 &&
         _animationController.status != AnimationStatus.forward) {
-      _animationController.duration = widget.animationDuration -
-          Duration(milliseconds: 3 * _progress.toInt());
+      print(_animationController.duration.toString() + 'luuuul3');
       _animationType = 2;
       _animationX =
           Tween<double>(begin: 0, end: _baseContainerConstraints.maxWidth)
