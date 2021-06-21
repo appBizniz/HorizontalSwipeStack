@@ -27,8 +27,8 @@ class SwipeStack<T> extends StatefulWidget {
   final int historyCount;
   final void Function(T item, SwiperPosition position, double progress)
       onProgress;
-  final void Function(int, SwiperPosition) onSwipe;
-  final void Function(int, SwiperPosition) onRewind;
+  final void Function(T item, int, SwiperPosition) onSwipe;
+  final void Function(T item, int, SwiperPosition) onRewind;
   final void Function() onEnd;
   final EdgeInsetsGeometry padding;
 
@@ -157,15 +157,17 @@ class SwipeStackState<T> extends State<SwipeStack<T>>
         } else if (_animationType == 3) {
           if (widget.onRewind != null)
             widget.onRewind(
-                children.length - 1, _history[_history.length - 1]["position"]);
+                (_history[_history.length - 1]["item"] as SwiperItem<T>).item,
+                children.length - 1,
+                _history[_history.length - 1]["position"]);
           _history.removeAt(_history.length - 1);
         }
 
         if (_animationType != 0 && _animationType != 3) {
-          children.removeAt(children.length - 1);
+          SwiperItem<T> item = children.removeAt(children.length - 1);
 
           if (widget.onSwipe != null)
-            widget.onSwipe(children.length, _currentItemPosition);
+            widget.onSwipe(item.item, children.length, _currentItemPosition);
 
           if (children.length <= widget.minItemCount) {
             widget.getItems().then((value) {
