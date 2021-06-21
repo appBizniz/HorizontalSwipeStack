@@ -26,7 +26,7 @@ class SwipeStack<T> extends StatefulWidget {
   final Duration animationDuration;
   final int historyCount;
   final void Function(T item, SwiperPosition position, double progress)
-      onProgress;
+      itemBuilder;
   final void Function(T item, int, SwiperPosition) onSwipe;
   final void Function(T item, int, SwiperPosition) onRewind;
   final void Function() onEnd;
@@ -35,7 +35,7 @@ class SwipeStack<T> extends StatefulWidget {
   SwipeStack(
       {Key key,
       @required this.getItems,
-      @required this.onProgress,
+      @required this.itemBuilder,
       this.minItemCount = 3,
       this.maxAngle = 35,
       this.threshold = 30,
@@ -99,7 +99,7 @@ class SwipeStackState<T> extends State<SwipeStack<T>>
   void addItems(List<T> items) {
     children = [
       ...items
-          .map((e) => SwiperItem<T>(item: e, builder: widget.onProgress))
+          .map((e) => SwiperItem<T>(item: e, builder: widget.itemBuilder))
           .toList(),
       ...children
     ];
