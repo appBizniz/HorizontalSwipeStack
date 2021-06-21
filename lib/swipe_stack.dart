@@ -110,7 +110,9 @@ class SwipeStackState<T> extends State<SwipeStack<T>>
     children = [];
 
     widget.getItems().then((List<T> items) {
-      addItems(items);
+      setState(() {
+        addItems(items);
+      });
     });
 
     if (widget.maxAngle > 0) _maxAngle = widget.maxAngle * (Math.pi / 180);
