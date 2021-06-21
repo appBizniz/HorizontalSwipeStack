@@ -25,7 +25,7 @@ class SwipeStack<T> extends StatefulWidget {
   final double scaleInterval;
   final Duration animationDuration;
   final int historyCount;
-  final void Function(T item, SwiperPosition position, double progress)
+  final Widget Function(T item, SwiperPosition position, double progress)
       itemBuilder;
   final void Function(T item, int, SwiperPosition) onSwipe;
   final void Function(T item, int, SwiperPosition) onRewind;
