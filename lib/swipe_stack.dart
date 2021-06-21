@@ -5,17 +5,18 @@ import 'package:flutter/widgets.dart';
 enum SwiperPosition { None, Left, Right }
 enum StackFrom { None, Top, Left, Right, Bottom }
 
-class SwiperItem {
-  Widget Function(SwiperPosition, double progress) builder;
+class SwiperItem<T> {
+  T item;
+  Widget Function(T item, SwiperPosition position, double progress) builder;
 
-  SwiperItem({@required this.builder});
+  SwiperItem({@required this.item, @required this.builder});
 }
 
-class SwipeStack extends StatefulWidget {
+class SwipeStack<T> extends StatefulWidget {
   //final List<SwiperItem> children;
 
-  final Future<List<SwiperItem>> Function() buildChildren;
-  final int minBuildItemCount;
+  final Future<List<T>> Function() getItems;
+  final int minItemCount;
   final int maxAngle;
   final int threshold;
   final StackFrom stackFrom;
@@ -24,6 +25,8 @@ class SwipeStack extends StatefulWidget {
   final double scaleInterval;
   final Duration animationDuration;
   final int historyCount;
+  final void Function(T item, SwiperPosition position, double progress)
+      onProgress;
   final void Function(int, SwiperPosition) onSwipe;
   final void Function(int, SwiperPosition) onRewind;
   final void Function() onEnd;
@@ -31,8 +34,9 @@ class SwipeStack extends StatefulWidget {
 
   SwipeStack(
       {Key key,
-      @required this.buildChildren,
-      this.minBuildItemCount = 3,
+      @required this.getItems,
+      @required this.onProgress,
+      this.minItemCount = 3,
       this.maxAngle = 35,
       this.threshold = 30,
       this.stackFrom = StackFrom.None,
@@ -56,9 +60,9 @@ class SwipeStack extends StatefulWidget {
   SwipeStackState createState() => SwipeStackState();
 }
 
-class SwipeStackState extends State<SwipeStack>
+class SwipeStackState<T> extends State<SwipeStack<T>>
     with SingleTickerProviderStateMixin {
-  List<SwiperItem> children = [];
+  List<SwiperItem<T>> children = [];
 
   AnimationController _animationController;
   Animation<double> _animationX;
@@ -92,16 +96,21 @@ class SwipeStackState extends State<SwipeStack>
 
   int get currentIndex => children.length - 1;
 
-  void addItems(List<SwiperItem> items) {
-    children = [...items, ...children];
+  void addItems(List<T> items) {
+    children = [
+      ...items
+          .map((e) => SwiperItem<T>(item: e, builder: widget.onProgress))
+          .toList(),
+      ...children
+    ];
   }
 
   @override
   void initState() {
     children = [];
 
-    widget.buildChildren().then((value) {
-      addItems(value);
+    widget.getItems().then((List<T> items) {
+      addItems(items);
     });
 
     if (widget.maxAngle > 0) _maxAngle = widget.maxAngle * (Math.pi / 180);
@@ -158,8 +167,8 @@ class SwipeStackState extends State<SwipeStack>
           if (widget.onSwipe != null)
             widget.onSwipe(children.length, _currentItemPosition);
 
-          if (children.length <= widget.minBuildItemCount) {
-            widget.buildChildren().then((value) {
+          if (children.length <= widget.minItemCount) {
+            widget.getItems().then((value) {
               addItems(value);
             });
           }
@@ -233,7 +242,8 @@ class SwipeStackState extends State<SwipeStack>
                 alignment: _alignment[widget.stackFrom],
                 child: Container(
                     constraints: constraints,
-                    child: children[index].builder(SwiperPosition.None, 0)))),
+                    child: children[index].builder(
+                        children[index].item, SwiperPosition.None, 0)))),
       );
     }
 
@@ -256,8 +266,8 @@ class SwipeStackState extends State<SwipeStack>
             angle: _angle,
             child: Container(
                 constraints: constraints,
-                child:
-                    children[index].builder(_currentItemPosition, _progress)),
+                child: children[index].builder(
+                    children[index].item, _currentItemPosition, _progress)),
           ),
           onPanStart: (DragStartDetails dragStartDetails) {
             RenderBox getBox = context.findRenderObject();
