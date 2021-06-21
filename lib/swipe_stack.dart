@@ -97,6 +97,7 @@ class SwipeStackState<T> extends State<SwipeStack<T>>
   int get currentIndex => children.length - 1;
 
   void addItems(List<T> items) {
+    items.removeWhere((element) => children.contains(element));
     children = [
       ...items
           .map((e) => SwiperItem<T>(item: e, builder: widget.itemBuilder))
